@@ -1,0 +1,25 @@
+Users:
+ - Id
+ - login (unique)
+ - password (hashed)
+ - CreatedAt
+ - ExpoPushToken (nullable)
+ 
+UserProducts:
+ - UserId
+ - ProductId
+ - NotificationsEnabled
+ - NotifyEveryHours (int)
+
+Products:
+ - Id
+ - Name
+ - LastCheckAt
+ - MediaExpertPrice (nullable)
+ - MediaExpertLink (nullable)
+ - X-KomPrice (nullable)
+ - X-KomLink (nullable)
+ (in the future possibility of add new shops...)
+ 
+Relations:
+Users * - * Products (UserProducts make it)
