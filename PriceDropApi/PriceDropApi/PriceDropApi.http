@@ -1,0 +1,6 @@
+@PriceDropApi_HostAddress = http://localhost:5221
+
+GET {{PriceDropApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
