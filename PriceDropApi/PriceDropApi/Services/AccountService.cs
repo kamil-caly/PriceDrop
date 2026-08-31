@@ -15,12 +15,17 @@ namespace PriceDropApi.Services
         private readonly PriceDropDbContext dbCtx;
         private readonly IPasswordHasher<User> passwordHasher;
         private readonly AuthenticationSettings authenticationSettings;
+        private readonly IUserContextService userContextService;
 
-        public AccountService(PriceDropDbContext dbCtx, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
+        public AccountService(PriceDropDbContext dbCtx, 
+            IPasswordHasher<User> passwordHasher, 
+            AuthenticationSettings authenticationSettings,
+            IUserContextService userContextService)
         {
             this.dbCtx = dbCtx;
             this.passwordHasher = passwordHasher;
             this.authenticationSettings = authenticationSettings;
+            this.userContextService = userContextService;
         }
 
         public void RegisterUser(RegisterUserDto dto)
@@ -74,6 +79,20 @@ namespace PriceDropApi.Services
 
             var tokenHandler = new JwtSecurityTokenHandler();
             return tokenHandler.WriteToken(token);
+        }
+
+        public void SaveExpoPushToken(string expoToken)
+        {
+            int? userId = userContextService.GetUserId();
+            if (userId == null)
+                throw new Exception("User not authenticated.");
+
+            var dbUser = dbCtx.Users.FirstOrDefault(u => u.Id == (int)userId.Value);
+            if (dbUser == null)
+                throw new Exception("User not found.");
+
+            dbUser.ExpoPushToken = expoToken;
+            dbCtx.SaveChanges();
         }
     }
 }

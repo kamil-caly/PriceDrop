@@ -49,6 +49,19 @@ namespace PriceDropApi.Controllers
         }
 
         [Authorize]
+        [HttpPost("expo-token")]
+        public ActionResult SaveExpoPushToken([FromQuery] string expoToken)
+        {
+            if (string.IsNullOrWhiteSpace(expoToken))
+            {
+                return BadRequest("Expo token is required.");
+            }
+
+            accountService.SaveExpoPushToken(expoToken);
+            return Ok(new { Message = "Expo token saved successfully." });
+        }
+
+        [Authorize]
         [HttpGet("me")]
         public ActionResult GetCurrentUser()
         {

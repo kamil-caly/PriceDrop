@@ -6,5 +6,6 @@ namespace PriceDropApi.Services.Interfaces
     {
         void RegisterUser(RegisterUserDto dto);
         string GenerateJwt(LoginUserDto dto);
+        void SaveExpoPushToken(string expoToken);
     }
 }
