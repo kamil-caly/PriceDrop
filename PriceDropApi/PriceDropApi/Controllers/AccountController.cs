@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PriceDropApi.Models;
 using PriceDropApi.Services.Interfaces;
+using System.Security.Claims;
 
 namespace PriceDropApi.Controllers
 {
@@ -44,6 +46,20 @@ namespace PriceDropApi.Controllers
 
             string token = accountService.GenerateJwt(dto);
             return Ok(token);
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public ActionResult GetCurrentUser()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var login = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            return Ok(new
+            {
+                UserId = userId,
+                Login = login
+            });
         }
     }
 }

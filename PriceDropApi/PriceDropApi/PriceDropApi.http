@@ -1,6 +1,10 @@
 @PriceDropApi_HostAddress = http://localhost:5221
+@JwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdCIsImV4cCI6MTc4OTQ3OTA5MiwiaXNzIjoiaHR0cDovL1ByaWNlRHJvcEFwaS5jb20iLCJhdWQiOiJodHRwOi8vUHJpY2VEcm9wQXBpLmNvbSJ9.AbRA306YqHYy-mPxQ1HIYrqL9VPqfAGcjuq4xUoWjio
 
-GET {{PriceDropApi_HostAddress}}/weatherforecast/
+###
+
+GET {{PriceDropApi_HostAddress}}/api/account/me
+Authorization: Bearer {{JwtToken}}
 Accept: application/json
 
 ###

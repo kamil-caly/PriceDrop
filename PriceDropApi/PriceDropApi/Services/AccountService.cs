@@ -33,7 +33,7 @@ namespace PriceDropApi.Services
             var newUser = new User()
             {
                 Login = dto.Login,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             };
 
             var hashedPassword = passwordHasher.HashPassword(newUser, dto.Password);
