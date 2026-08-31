@@ -18,6 +18,11 @@ namespace PriceDropApi.Services
 
         public void RegisterUser(RegisterUserDto dto)
         {
+            if (dbCtx.Users.Any(u => u.Login == dto.Login))
+            {
+                throw new Exception("User with this login already exists.");
+            }
+
             var newUser = new User()
             {
                 Login = dto.Login,

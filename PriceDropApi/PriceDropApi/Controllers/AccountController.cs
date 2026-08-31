@@ -18,6 +18,18 @@ namespace PriceDropApi.Controllers
         [HttpPost("register")]
         public ActionResult RegisterUser([FromBody] RegisterUserDto dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.Login) 
+                || string.IsNullOrWhiteSpace(dto.Password) 
+                || string.IsNullOrWhiteSpace(dto.ConfirmPassword))
+            {
+                return BadRequest("Login, password and confirm password are required.");
+            }
+
+            if (dto.Password != dto.ConfirmPassword)
+            {
+                return BadRequest("Password and confirm password do not match.");
+            }
+
             accountService.RegisterUser(dto);
             return Ok();
         }
