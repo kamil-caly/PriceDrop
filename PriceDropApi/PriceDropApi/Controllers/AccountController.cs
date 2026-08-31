@@ -33,5 +33,17 @@ namespace PriceDropApi.Controllers
             accountService.RegisterUser(dto);
             return Ok();
         }
+
+        [HttpPost("login")]
+        public ActionResult Login([FromBody] LoginUserDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Login) || string.IsNullOrWhiteSpace(dto.Password))
+            {
+                return BadRequest("Login and password are required.");
+            }
+
+            string token = accountService.GenerateJwt(dto);
+            return Ok(token);
+        }
     }
 }
