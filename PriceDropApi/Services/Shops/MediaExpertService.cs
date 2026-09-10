@@ -7,7 +7,7 @@ namespace PriceDropApi.Services.Shops
     {
         public decimal GetPrice(string productUrl)
         {
-            throw new NotImplementedException();
+            return 2.2m;
         }
     }
 }

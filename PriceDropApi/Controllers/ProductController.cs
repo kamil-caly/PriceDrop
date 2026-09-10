@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using PriceDropApi.Models;
 using PriceDropApi.Models.Enums;
+using PriceDropApi.Services.Interfaces;
+using PriceDropApi.Services.Interfaces.Shops;
 
 namespace PriceDropApi.Controllers
 {
@@ -9,10 +11,21 @@ namespace PriceDropApi.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        [HttpGet("get-price")]
-        public ActionResult GetPrice([FromBody] GetPriceDto dto)
-        {
+        private readonly IMediaExpertService mediaExpertService;
 
+        public ProductController(IMediaExpertService mediaExpertService)
+        {
+            this.mediaExpertService = mediaExpertService;
+        }
+
+        [HttpGet("get-price")]
+        public ActionResult GetPrice([FromQuery] GetPriceDto dto)
+        {
+            return dto.ShopType switch
+            {
+                ShopType.MediaExpert => Ok(mediaExpertService.GetPrice(dto.ShopUrl)),
+                _ => BadRequest("Unsupported shop type.")
+            };
         }
     }
 }
