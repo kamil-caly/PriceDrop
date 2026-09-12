@@ -11,19 +11,22 @@ namespace PriceDropApi.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IMediaExpertService mediaExpertService;
+        private readonly IXKomService xKomService;
+        private readonly IMoreleService moreleService;
 
-        public ProductController(IMediaExpertService mediaExpertService)
+        public ProductController(IXKomService xKomService, IMoreleService moreleService)
         {
-            this.mediaExpertService = mediaExpertService;
+            this.xKomService = xKomService;
+            this.moreleService = moreleService;
         }
 
         [HttpGet("get-price")]
-        public ActionResult GetPrice([FromQuery] GetPriceDto dto)
+        public async Task<ActionResult> GetPrice([FromQuery] GetPriceDto dto)
         {
             return dto.ShopType switch
             {
-                ShopType.MediaExpert => Ok(mediaExpertService.GetPrice(dto.ShopUrl)),
+                ShopType.XKom => Ok(await xKomService.GetPrice(dto.ProductUrl)),
+                ShopType.Morele => Ok(await moreleService.GetPrice(dto.ProductUrl)),
                 _ => BadRequest("Unsupported shop type.")
             };
         }
