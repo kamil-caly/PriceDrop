@@ -9,9 +9,9 @@ Aplikacja powinna spełniać następujące wymagania:
 - Zalogowany użytkownik ma możliwość wywołania endpointu do dodawania produktów do śledzenia.
 - Zalogowany użytkownik może odświeżyć formatkę z produktami aby zaciągnąć z api najnowsze ich ceny.
 - Podczas dodawania produktów do śledzenia, użytkownik podaje link do produktu w sklepie internetowym 
-(aktualnie dostępne sklepy: Media Expert i XKom).
+(aktualnie dostępne sklepy: Morele i XKom).
 - Dodane dla zalogowanego użytkownika produkty można usuwać i edytować.
-- Na backendzie wystawiony jest również background service, który co 6h wysyła powiadomienie (push notification)
+- Na backendzie wystawiona jest funkcja cron z azure, która co 6h wysyła powiadomienie (push notification)
 do użytkownika, jeśli cena któregoś z jego produktów spadła. W przyszłości planowane jest dodanie możliwości ustawienia
 czasu wysyłania powiadomień do użytkownika.
 - Wysyłanie powiadomień push do użytkownika odbywa się poprzez Expo notification.

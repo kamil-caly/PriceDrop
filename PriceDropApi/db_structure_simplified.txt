@@ -15,8 +15,8 @@ Products:
  - Id
  - Name
  - LastCheckAt
- - MediaExpertPrice (nullable)
- - MediaExpertLink (nullable)
+ - MorelePrice (nullable)
+ - MoreleLink (nullable)
  - X-KomPrice (nullable)
  - X-KomLink (nullable)
  (in the future possibility of add new shops...)
