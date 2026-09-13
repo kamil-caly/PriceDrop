@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PriceDropApi.Entities;
 using PriceDropApi.Models;
+using PriceDropApi.Models.Enums;
 using PriceDropApi.Services.Interfaces;
 using PriceDropApi.Services.Interfaces.Shops;
 
@@ -20,6 +21,16 @@ namespace PriceDropApi.Services
             this.userContextService = userContextService;
             this.moreleService = moreleService;
             this.xkomService = xkomService;
+        }
+
+        public async Task<decimal?> GetPriceAsync(GetPriceDto dto)
+        {
+            return dto.ShopType switch
+            {
+                ShopType.XKom => await xkomService.GetPrice(dto.ProductUrl),
+                ShopType.Morele => await moreleService.GetPrice(dto.ProductUrl),
+                _ => null
+            };
         }
 
         public async Task<IEnumerable<GetProductsDto>> GetProductsAsync()
