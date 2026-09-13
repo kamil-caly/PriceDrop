@@ -28,7 +28,7 @@ namespace PriceDropApi.Controllers
 
         [Authorize]
         [HttpGet("get-products")]
-        public async Task<ActionResult> GetProducts()
+        public async Task<ActionResult<IEnumerable<GetProductsDto>>> GetProducts()
         {
             return Ok(await productService.GetProductsAsync());
         }
@@ -39,6 +39,14 @@ namespace PriceDropApi.Controllers
         {
             var productId = await productService.AddProductAsync(dto);
             return Created($"product id: {productId}", null);
+        }
+
+        [Authorize]
+        [HttpDelete("delete-product/{productId}")]
+        public async Task<ActionResult> DeleteProduct([FromRoute] int productId)
+        {
+            await productService.DeleteProductAsync(productId);
+            return NoContent();
         }
     }
 }

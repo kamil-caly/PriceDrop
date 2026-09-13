@@ -81,6 +81,7 @@ namespace PriceDropApi.Services
                 .Include(up => up.Product)
                 .Select(up => new GetProductsDto
                 {
+                    Id = up.Product.Id,
                     Name = up.Product.Name,
                     LastCheckAt = up.Product.LastCheckAt,
                     MoreleLink = up.Product.MoreleLink,
@@ -120,6 +121,40 @@ namespace PriceDropApi.Services
             await dbCtx.SaveChangesAsync();
 
             return newProduct.Id;
+        }
+
+        public async Task DeleteProductAsync(int productId)
+        {
+            int? userId = userContextService.GetUserId();
+            if (userId == null)
+            {
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+
+            var userProduct = await dbCtx.UserProducts
+                .FirstOrDefaultAsync(up => up.UserId == userId && up.ProductId == productId);
+
+            if (userProduct == null)
+            {
+                throw new InvalidOperationException("Product not found.");
+            }
+
+            dbCtx.UserProducts.Remove(userProduct);
+            await dbCtx.SaveChangesAsync();
+
+            // teraz sprawdzamy, czy w tabeli z produktami jest produkt, który nie jest powiązany z żadnym użytkownikiem
+            var isProductLinkedToAnyUser = await dbCtx.UserProducts
+                .AnyAsync(up => up.ProductId == productId);
+
+            if (!isProductLinkedToAnyUser)
+            {
+                var productToDel = await dbCtx.Products.FindAsync(productId);
+                if (productToDel != null)
+                {
+                    dbCtx.Products.Remove(productToDel);
+                    await dbCtx.SaveChangesAsync();
+                }
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     public class GetProductsDto
     {
+        public int Id { get; set; }
         public string Name { get; set; } = default!;
         public DateTime? LastCheckAt { get; set; }
         public double? MorelePrice { get; set; }
