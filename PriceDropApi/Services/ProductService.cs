@@ -91,5 +91,35 @@ namespace PriceDropApi.Services
                 })
                 .ToListAsync();
         }
+
+        public async Task<int> AddProductAsync(AddProductDto dto)
+        {
+            int? userId = userContextService.GetUserId();
+            if (userId == null)
+            {
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+
+            var newProduct = new Product
+            {
+                Name = dto.Name,
+                MoreleLink = dto.MoreleLink,
+                X_KomLink = dto.X_KomLink
+            };
+
+            dbCtx.Products.Add(newProduct);
+
+            var newUserProduct = new UserProduct
+            {
+                UserId = userId.Value,
+                Product = newProduct,
+                NotificationsEnabled = dto.NotificationsEnabled
+            };
+
+            dbCtx.UserProducts.Add(newUserProduct);
+            await dbCtx.SaveChangesAsync();
+
+            return newProduct.Id;
+        }
     }
 }

@@ -32,5 +32,13 @@ namespace PriceDropApi.Controllers
         {
             return Ok(await productService.GetProductsAsync());
         }
+
+        [Authorize]
+        [HttpPost("add-product")]
+        public async Task<ActionResult> AddProduct([FromBody] AddProductDto dto)
+        {
+            var productId = await productService.AddProductAsync(dto);
+            return Created($"product id: {productId}", null);
+        }
     }
 }
