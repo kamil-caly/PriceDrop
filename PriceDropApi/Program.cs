@@ -46,6 +46,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IXKomService, XKomService>();
 builder.Services.AddScoped<IMoreleService, MoreleService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

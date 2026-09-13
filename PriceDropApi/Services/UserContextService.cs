@@ -19,5 +19,11 @@ namespace PriceDropApi.Services
             string? userIdClaim = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             return int.TryParse(userIdClaim, out int userId) ? userId : null;
         }
+
+        public string? GetUserLogin()
+        {
+            if (User is null) return null;
+            return User.FindFirst(c => c.Type == ClaimTypes.Name)?.Value;
+        }
     }
 }
