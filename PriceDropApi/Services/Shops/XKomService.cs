@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using PriceDropApi.Services.Interfaces.Shops;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace PriceDropApi.Services.Shops
@@ -18,7 +19,7 @@ namespace PriceDropApi.Services.Shops
 
             priceString = Regex.Replace(priceString, @"[^0-9,]", "");
 
-            return decimal.Parse(priceString);
+            return decimal.Parse(priceString, CultureInfo.GetCultureInfo("pl-PL"));
         }
     }
 }
