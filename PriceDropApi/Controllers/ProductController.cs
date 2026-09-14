@@ -48,5 +48,13 @@ namespace PriceDropApi.Controllers
             await productService.DeleteProductAsync(productId);
             return NoContent();
         }
+
+        [Authorize]
+        [HttpPut("update-product/{productId}")]
+        public async Task<ActionResult> UpdateProduct([FromRoute] int productId, [FromBody] UpdateProductDto dto)
+        {
+            await productService.UpdateProductAsync(productId, dto);
+            return Ok();
+        }
     }
 }

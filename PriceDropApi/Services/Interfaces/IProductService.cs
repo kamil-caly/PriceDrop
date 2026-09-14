@@ -8,5 +8,6 @@ namespace PriceDropApi.Services.Interfaces
         Task<IEnumerable<GetProductsDto>> GetProductsAsync();
         Task<int> AddProductAsync(AddProductDto dto);
         Task DeleteProductAsync(int productId);
+        Task UpdateProductAsync(int productId, UpdateProductDto dto);
     }
 }

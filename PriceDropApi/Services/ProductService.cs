@@ -139,22 +139,38 @@ namespace PriceDropApi.Services
                 throw new InvalidOperationException("Product not found.");
             }
 
+            var productToDel = await dbCtx.Products.FirstAsync(p => p.Id == productId);
+
             dbCtx.UserProducts.Remove(userProduct);
+            dbCtx.Products.Remove(productToDel);
+
             await dbCtx.SaveChangesAsync();
+        }
 
-            // teraz sprawdzamy, czy w tabeli z produktami jest produkt, który nie jest powiązany z żadnym użytkownikiem
-            var isProductLinkedToAnyUser = await dbCtx.UserProducts
-                .AnyAsync(up => up.ProductId == productId);
-
-            if (!isProductLinkedToAnyUser)
+        public async Task UpdateProductAsync(int productId, UpdateProductDto dto)
+        {
+            int? userId = userContextService.GetUserId();
+            if (userId == null)
             {
-                var productToDel = await dbCtx.Products.FindAsync(productId);
-                if (productToDel != null)
-                {
-                    dbCtx.Products.Remove(productToDel);
-                    await dbCtx.SaveChangesAsync();
-                }
+                throw new UnauthorizedAccessException("User is not authenticated.");
             }
+
+            var userProduct = await dbCtx.UserProducts
+                .FirstOrDefaultAsync(up => up.UserId == userId && up.ProductId == productId);
+
+            if (userProduct == null)
+            {
+                throw new InvalidOperationException("Product not found.");
+            }
+
+            var productToUpdate = await dbCtx.Products.FirstAsync(p => p.Id == productId);
+
+            productToUpdate.Name = dto.Name;
+            productToUpdate.MoreleLink = dto.MoreleLink;
+            productToUpdate.X_KomLink = dto.X_KomLink;
+            userProduct.NotificationsEnabled = dto.NotificationsEnabled;
+
+            await dbCtx.SaveChangesAsync();
         }
     }
 }
