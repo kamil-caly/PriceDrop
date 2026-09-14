@@ -1,0 +1,40 @@
+name: Deploy PriceDropApi to Azure
+
+on:
+  push:
+    branches:
+      - release
+
+env:
+  AZURE_WEBAPP_NAME: price-drop-api
+  DOTNET_VERSION: '10.0.x'
+  PROJECT_PATH: PriceDropApi/PriceDropApi.csproj
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.PROJECT_PATH }}
+
+    - name: Build the solution
+      run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
+
+    - name: Publish the app
+      run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --no-build -o ./publish
+
+    - name: Deploy to Azure App Service
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZUREAPPSERVICE__PRICE_DROP_API__PUBLISHPROFILE }}
+        package: ./publish
