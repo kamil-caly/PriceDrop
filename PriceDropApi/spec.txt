@@ -14,4 +14,4 @@ Aplikacja powinna spełniać następujące wymagania:
 - Na backendzie wystawiona jest funkcja cron z azure, która co 6h wysyła powiadomienie (push notification)
 do użytkownika, jeśli cena któregoś z jego produktów spadła. W przyszłości planowane jest dodanie możliwości ustawienia
 czasu wysyłania powiadomień do użytkownika.
-- Wysyłanie powiadomień push do użytkownika odbywa się poprzez Expo notification.
+- Wysyłanie powiadomień push do użytkownika odbywa się poprzez Expo notification lub Firebase cloud messaging.
