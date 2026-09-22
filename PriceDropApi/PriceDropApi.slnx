@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="../PriceDropWorker/PriceDropWorker.csproj" Id="fb95837d-135c-43c1-a228-36a1eb4f546c" />
   <Project Path="PriceDropApi.csproj" />
 </Solution>
