@@ -33,7 +33,7 @@ public class CheckProductPrices
     }
 
     [Function("CheckProductPrices")]
-    public async Task Run([TimerTrigger("0 11 17 * * *")] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("0 0 12 1 * *")] TimerInfo myTimer)
     {
         _logger.LogInformation("C# Timer trigger function executed at: {executionTime}", DateTime.Now);
 
