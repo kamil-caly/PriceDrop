@@ -134,5 +134,7 @@ public class CheckProductPrices
         {
             _logger.LogInformation("Next timer schedule at: {nextSchedule}", myTimer.ScheduleStatus.Next);
         }
+
+        _logger.LogInformation("C# Timer trigger function finished execution at: {executionTime}", DateTime.Now);
     }
 }
