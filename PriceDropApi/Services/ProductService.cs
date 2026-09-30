@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Json;
 using PriceDropApi.Entities;
 using PriceDropApi.Models;
 using PriceDropApi.Models.Enums;
@@ -13,14 +14,16 @@ namespace PriceDropApi.Services
         private readonly IUserContextService userContextService;
         private readonly IMoreleService moreleService;
         private readonly IXKomService xkomService;
+        private readonly IHttpClientFactory httpClientFactory;
 
         public ProductService(PriceDropDbContext dbCtx, IUserContextService userContextService, IMoreleService moreleService,
-            IXKomService xkomService)
+            IXKomService xkomService, IHttpClientFactory httpClientFactory)
         {
             this.dbCtx = dbCtx;
             this.userContextService = userContextService;
             this.moreleService = moreleService;
             this.xkomService = xkomService;
+            this.httpClientFactory = httpClientFactory;
         }
 
         public async Task<decimal?> GetPriceAsync(GetPriceDto dto)
@@ -31,6 +34,91 @@ namespace PriceDropApi.Services
                 ShopType.Morele => await moreleService.GetPrice(dto.ProductUrl),
                 _ => null
             };
+        }
+
+        public async Task CheckProductPricesAndNotifyUsersAsync()
+        {
+            var products = await dbCtx.Products
+                .Where(p => p.UserProducts.Any(up => up.NotificationsEnabled))
+                .Include(p => p.UserProducts)
+                .ToListAsync();
+
+            var notifyDtos = new List<PriceDropNotificationDto>();
+
+            foreach (var product in products)
+            {
+                if (product.MoreleLink != null)
+                {
+                    double moreleCurrentPrice = Convert.ToDouble(await moreleService.GetPrice(product.MoreleLink));
+                    if (moreleCurrentPrice < product.MorelePrice)
+                    {
+                        notifyDtos.Add(new PriceDropNotificationDto
+                        {
+                            ProductId = product.Id,
+                            UserId = product.UserProducts.First().UserId,
+                            ProductName = product.Name,
+                            NewPrice = moreleCurrentPrice,
+                            ShopWithNewPrice = ShopType.Morele
+                        });
+
+                        continue;
+                    }
+                }
+                else if (product.X_KomLink != null)
+                {
+                    double xKomCurrentPrice = Convert.ToDouble(await xkomService.GetPrice(product.X_KomLink));
+                    if (xKomCurrentPrice < product.X_KomPrice)
+                    {
+                        notifyDtos.Add(new PriceDropNotificationDto
+                        {
+                            ProductId = product.Id,
+                            UserId = product.UserProducts.First().UserId,
+                            ProductName = product.Name,
+                            NewPrice = xKomCurrentPrice,
+                            ShopWithNewPrice = ShopType.XKom
+                        });
+
+                        continue;
+                    }
+                }
+            }
+
+            if (notifyDtos.Count == 0)
+            {
+                return;
+            }
+
+            var userIds = notifyDtos.Select(n => n.UserId);
+
+            var userInfo =
+                    (from u in dbCtx.Users
+                     where userIds.Contains(u.Id)
+                     select new
+                     {
+                         Id = u.Id,
+                         ExpoPushToken = u.ExpoPushToken
+                     }).ToList();
+
+            userInfo.ForEach(u =>
+            {
+                var notify = notifyDtos.First(n => n.UserId == u.Id);
+                notify.UserExpoPushToken = u.ExpoPushToken;
+            });
+
+            var httpClient = httpClientFactory.CreateClient("ExpoPush");
+
+            foreach (var notify in notifyDtos.Where(n => !string.IsNullOrWhiteSpace(n.UserExpoPushToken)))
+            {
+                var notification = new
+                {
+                    to = notify.UserExpoPushToken,
+                    title = "Spadek ceny produktu",
+                    body = $"Cena produktu {notify.ProductName} spadła do {notify.NewPrice:0.00} zł w sklepie {notify.ShopWithNewPrice}."
+                };
+
+                using var response = await httpClient.PostAsJsonAsync("send", notification);
+                response.EnsureSuccessStatusCode();
+            }
         }
 
         public async Task<IEnumerable<GetProductsDto>> GetProductsAsync()

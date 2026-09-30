@@ -1,8 +1,8 @@
-﻿using PriceDropApi.Models.Enums;
+using PriceDropApi.Models.Enums;
 
-namespace PriceDropWorker
+namespace PriceDropApi.Models
 {
-    public class NotifyDto
+    public class PriceDropNotificationDto
     {
         public int ProductId { get; set; }
         public int UserId { get; set; }

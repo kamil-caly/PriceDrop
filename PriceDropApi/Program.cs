@@ -49,6 +49,11 @@ builder.Services.AddScoped<IMoreleService, MoreleService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
+builder.Services.AddHttpClient("ExpoPush", client =>
+{
+    client.BaseAddress = new Uri("https://exp.host/--/api/v2/push/");
+});
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

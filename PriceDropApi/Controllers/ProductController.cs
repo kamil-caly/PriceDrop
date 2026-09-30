@@ -56,5 +56,12 @@ namespace PriceDropApi.Controllers
             await productService.UpdateProductAsync(productId, dto);
             return Ok();
         }
+
+        [HttpPost("check-prices")]
+        public async Task<ActionResult> CheckProductPrices()
+        {
+            await productService.CheckProductPricesAndNotifyUsersAsync();
+            return Ok();
+        }
     }
 }
